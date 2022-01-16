@@ -37,7 +37,7 @@ class HomePage extends StatelessWidget {
         child: Container(
           // เทียบเท่ากับ <div> ของ HTML
           decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(10),//ขอบมน
               color: Colors.pinkAccent.shade100,
               boxShadow: [
                 BoxShadow(
