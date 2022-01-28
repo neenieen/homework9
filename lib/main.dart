@@ -1,82 +1,234 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
+import 'game.dart';
+
 void main() {
-  runApp(const MyApp());
+  const app = MyApp();
+  runApp(app);
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // callback method
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'OLYMPIC BOXING SCORING',
+      title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.purple,
       ),
-      home: MyHomePage(),
+      home: HomePage(),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class HomePage extends StatelessWidget {
+  final _controller = TextEditingController();
+  late Game _game;
+
+  HomePage({Key? key}) : super(key: key) {
+    _game = Game(maxRandom: 100);
+  }
+
+  void _showOkDialog(BuildContext context, String title, String content) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(content),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('OK'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    var showSeven = true;
+
     return Scaffold(
-      appBar: AppBar(title: Text('Guess Number'),),
-      body: Container(
-        decoration: BoxDecoration(
-          color: Colors.pink.shade50,
-          border: Border.all(
-            color: const Color(0xBA9F07A3),
-            width: 2.0),
-          boxShadow:[
-             BoxShadow(
-               color: const Color(0xBAFA93FD),
-               offset: Offset(3.0,3.0),//ตำแหน่งเงา เป็นdouble dx,dy
-               blurRadius: 3.8, //ความเบลอของเงา
-               spreadRadius: 3.0 //ความแผ่ของเงา
-             )
-          ]
-        ),
-        //alignment: Alignment.center,//คอนเทนเนอร์จะขยายเต็มจอ
-        child: Center(
-            child: Column(
-              //mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              //crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Image.asset('assets/images/guess_logo.png',width: 80.0,),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('hello11231531',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Color(0xEBD70090),fontSize: 30.0),
+
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 0.0),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.pink.shade50,
+          ),
+          alignment: Alignment.center,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              /*Row(
+                children: [
+                  Container(width: 50.0, height: 50.0, color: Colors.blue),
+                  Expanded(
+                    child: Container(
+                      width: 30.0,
+                      height: 50.0,
+                      //color: Colors.pink,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Text('FLUTTER', textAlign: TextAlign.end,),
+                      ),
+                      alignment: Alignment.centerRight,
                     ),
-                    TextButton(
-                      child: Text('Test'),
-                      onPressed: () {},
+                  ),
+                  //SizedBox(width: 10.0),
+                ],
+              ),*/
+              /*Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Expanded(child: Container(color: Colors.green, width: 100.0, height: 50.0)),
+                  Container(color: Colors.red, width: 50.0, height: 50.0),
+                ],
+              ),*/
+              Expanded(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+
+                    SizedBox(width: 8.0),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.lock,
+                              size: 80.0,
+                              color: Colors.pinkAccent,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Text(
+                              'กรุณาใส่รหัสผ่าน',
+                              style: TextStyle(
+                                fontSize: 25.0,
+                                color: Colors.pink.shade900,
+                                //fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ],
                 ),
+              ),
 
-                ElevatedButton(
-                  child: Text('ElevatedButton'),
-                  onPressed: (){},),
-                OutlinedButton(child: Text('OutlinedButton'),
-                  onPressed: (){},)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 1; i <= 3; i++) _buildButton4(num: i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 4; i <= 6; i++) _buildButton4(num: i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 7; i <= 9; i++) _buildButton4(num: i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 60.0,
+                  ),
+                  _buildButton4(num: 0),
+                  Container(
+                    width: 20.0,
+                  ),
+                  Icon(
+                    Icons.backspace,
+                    size: 40.0,
+                    color: Colors.pinkAccent,
 
+                  ),
+                ],
+              ),
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: TextButton(
+                  child: Text('ลืมรหัสผ่าน'),
+                  onPressed: () {
 
-              ],
-            )
+                    }
+
+                ),
+
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
+
+  Widget buildButton({int? num}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: OutlinedButton(
+          onPressed: () {
+            print('You pressed $num');
+          },
+          child: Text('$num')),
+    );
+  }
 }
 
+Widget _buildButton4({int? num}) {
+  return Padding(
+    padding: const EdgeInsets.all(8.0),
+    child: Container(
+      width: 75.0,
+      height: 75.0,
+      //color: Colors.white, // ห้ามกำหนด color ตรงนี้ ถ้าหากกำหนดใน BoxDecoration แล้ว
+      decoration: BoxDecoration(
+          color: Colors.pink.shade100,
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.pinkAccent, width: 2.0),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.2), // สีเงา
+              offset: Offset(2, 4), // ทิศทางของเงาในแนวนอนและแนวตั้ง ตามลำดับ
+              blurRadius: 4.0,
+              spreadRadius: 2.0,
+            )
+          ]
+      ),
+      child: OutlinedButton(
+          onPressed: () {
+            print('You pressed $num');
+          },
+          child: Text('$num')),
+    ),
+  );
+}

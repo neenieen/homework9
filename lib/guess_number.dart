@@ -1,216 +1,81 @@
 // ignore_for_file: avoid_print
-import 'package:flutter/material.dart';
+
+import 'dart:io';
 import 'game.dart';
 
 void main() {
-  runApp(const MyApp());
+  while (true) {
+    playGame();
+    String? input;
+
+    do {
+      stdout.write('Play again? (Y/N): ');
+      input = stdin.readLineSync();
+    } while (input!.toLowerCase() != 'y' && input.toLowerCase() != 'n');
+
+    if (input.toLowerCase() == 'n') break;
+  }
+
+  print('\n\nYou\'ve played ${Game.guessCountList.length} games');
+  for (var i = 0; i < Game.guessCountList.length; i++) {
+    print('🚀 Game #${i + 1}: ${Game.guessCountList[i]} guesses');
+  }
+
+  /*var myList = [];
+  myList.add(1);
+  myList.add('hello');
+  myList.add(false);
+
+  for (var i = 0; i < myList.length; i++) {
+    print(myList[i]);
+  }
+
+  myList.forEach((item) {
+    print(item);
+  });*/
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+void playGame() {
+  int? maxRandom;
+  do {
+    stdout.write('\nEnter a maximum number to random: ');
+    var input = stdin.readLineSync();
+    maxRandom = int.tryParse(input!);
+  } while (maxRandom == null);
 
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
-      ),
-      home: HomePage(),
-    );
-  }
-}
+  var game = Game(maxRandom: maxRandom);
+  var isCorrect = false;
 
-class HomePage extends StatelessWidget {
-  HomePage({Key? key}) : super(key: key);
+  print('');
+  print('╔════════════════════════════════════════');
+  print('║            GUESS THE NUMBER            ');
+  print('╟────────────────────────────────────────');
 
-  final _controller = TextEditingController();
-  var game = Game();
+  do {
+    stdout.write('║ Guess the number between 1 and $maxRandom: ');
+    var input = stdin.readLineSync();
+    var guess = int.tryParse(input!);
+    if (guess == null) {
+      continue;
+    }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('GUESS THE NUMBER'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Container(
-          // เทียบเท่ากับ <div> ของ HTML
-          decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(10),
-              color: Colors.deepOrange.shade100,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.deepOrange.withOpacity(0.6),
-                  offset: const Offset(10.0, 10.0),
-                  blurRadius: 2.0,
-                  spreadRadius: 2.0,
-                ),
-              ]),
+    var result = game.doGuess(guess);
 
-          alignment: Alignment.center,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/guess_logo.png', width: 200),
-                    SizedBox(width: 8.0),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'GUESS ',
-                          style: TextStyle(
-                            fontSize: 50.0,
-                            color: Colors.deepOrangeAccent.withOpacity(0.6),
-                          ),
-                        ),
-                        Text(
-                          'THE NUMBER',
-                          style: TextStyle(
-                            fontSize: 30.0,
-                            color: Colors.deepOrange.withOpacity(1),
-                          ),
-                        )
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: TextField(
-                  textAlign: TextAlign.center,
-                  controller: _controller,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: Colors.white.withOpacity(0.7),
-                    border: OutlineInputBorder(),
-                    hintText: 'ทายเลขตั้งแต่ 1 ถึง 100',
-                    hintStyle: TextStyle(
-                      fontSize: 20.0,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16.0),
-                child: ElevatedButton(
-                  onPressed: () {
-                    //การทำงานเมื่อกดปุ่มรัน
-                    String? input = _controller.text;
-                    int? guess = int.tryParse(input);
-                    if (guess == null) {
-                      if (input.isNotEmpty) {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('ERROR'),
-                                content: Text('กรอกข้อมูลไม่ถูกต้อง ให้กรอกเฉพาะตัวเลขเท่านั้น'),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('OK')
-                                  )
-                                ],
-                              );
-                            });
-                      } else {
-                        showDialog(
-                            context: context,
-                            barrierDismissible: false,
-                            builder: (BuildContext context) {
-                              return AlertDialog(
-                                title: Text('ERROR'),
-                                content: Text('กรุณากรอกข้อมูล'),
-                                actions: [
-                                  TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Text('OK')
-                                  )
-                                ],
-                              );
-                            });
-                      }
-                    }
-                    var result = game.doGuess(guess!);
-                    print(result);
-                    if (result == 1) {
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('RESULT'),
-                              content: Text(input + ' is TOO HIGH!, try again'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('OK')
-                                )
-                              ],
-                            );
-                          });
-                    } else if (result == -1) {
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('RESULT'),
-                              content: Text(input + ' is TOO LOW!, try again'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('OK')
-                                )
-                              ],
-                            );
-                          });
-                    } else {
-                      showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('RESULT'),
-                              content: Text(input + ' is CORRECT!\n Total guesses: ${game.guessCount}'),
-                              actions: [
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                    child: Text('OK')
-                                )
-                              ],
-                            );
-                          });
-                    }
-                  },
-                  child: Text('GUESS',
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+    if (result == 1) {
+      print('║ ➜ $guess is TOO HIGH! ▲');
+      print('╟────────────────────────────────────────');
+    } else if (result == -1) {
+      print('║ ➜ $guess is TOO LOW! ▼');
+      print('╟────────────────────────────────────────');
+    } else if (result == 0) {
+      print('║ ➜ $guess is CORRECT ❤, total guesses: ${game.guessCount}');
+      print('╟────────────────────────────────────────');
+      isCorrect = true;
+      //Game.guessCountList.add(game.guessCount);
+      game.addCountList();
+    }
+  } while (!isCorrect);
+
+  print('║                 THE END                ');
+  print('╚════════════════════════════════════════');
 }
