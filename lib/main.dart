@@ -12,9 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GUESS THE NUMBER',
+      title: 'PIN',
       theme: ThemeData(
-        primarySwatch: Colors.pink,
+        primarySwatch: Colors.amber,
       ),
       home: Login(),
     );
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
 
 class Login extends StatefulWidget {
   late Game _game;
-  static const buttonsize = 50.0;
+  static const buttonsize = 70.0;
 
   Login({Key? key}) : super(key: key) {
     _game = Game(maxRandom: 100);
@@ -35,24 +35,20 @@ class Login extends StatefulWidget {
 
 class _LoginState extends State<Login> {
   String _input = '';
-  String _message = 'ทายเลข 1 ถึง 100';
+  var _num = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('GUESS THE NUMBER'),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Container(
-          // เทียบเท่ากับ <div> ของ HTML
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: Colors.pink.shade100,
+              color: Colors.amber.shade100,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.pink.withOpacity(0.5),
+                  color: Colors.amber.withOpacity(0.3),
                   offset: const Offset(10.0, 10.0),
                   blurRadius: 2.0,
                   spreadRadius: 2.0,
@@ -63,115 +59,99 @@ class _LoginState extends State<Login> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Expanded(
-                child: Row(
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset('assets/images/guess_logo.png', width: 150),
-                    SizedBox(width: 8.0),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
-                          'GUESS ',
-                          style: TextStyle(
-                            fontSize: 50.0,
-                            color: Colors.pink,
-                          ),
+                        Icon(//กำหนดไอคอน
+                          Icons.lock,
+                          size: 120.0,
+                          color: Colors.amber,
                         ),
-                        Text(
-                          'THE NUMBER',
-                          style: TextStyle(
-                            fontSize: 30.0,
-                            color: Colors.pinkAccent,
-                          ),
-                        )
                       ],
-                    )
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "LOGIN",
+                              style: TextStyle(
+                                fontSize: 35.0,
+                                color: Colors.red
+                              ),
+                            ),
+                            Text('Enter PIN to login',
+                               style: TextStyle(
+                                 color: Colors.red
+                               ),
+
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  _input,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                  ),
+                padding: const EdgeInsets.all(30.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    for (var i = 0; i < 6; i++)
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          width: 30.0,
+                          height: 30.0,
+                          margin: EdgeInsets.all(2.0),
+                          decoration: BoxDecoration(
+                            color: (i < _num)?
+                            Colors.red
+                                : Colors.amber.shade300,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
               ),
-
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  child: Text(
-                    _message,style: TextStyle(
-                    fontSize: 20.0,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 1; i <= 3; i++) _buildButton(i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 4; i <= 6; i++) _buildButton(i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 7; i <= 9; i++) _buildButton(i),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 80.0,
                   ),
-                  ),
-                ),
-              ),
-
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 1; i <= 3; i++) _buildButton4(i),
+                  _buildButton(0),
+                  _buildButton(-1),
                 ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 4; i <= 6; i++) _buildButton4(i),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  for (var i = 7; i <= 9; i++) _buildButton4(i),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  _buildButton4(-2),
-                  _buildButton4(0),
-                  _buildButton4(-1),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: ElevatedButton(
-                  child: Text('GUESS'),
-                  onPressed: () {
-                    var guess = int.tryParse(_input);
-                    if (guess == null){
-                      setState(() {
-                        _message =
-                        'กรุณากรอกข้อมูล';
-                      });
-
-                    }
-                    var guessResult = widget._game.doGuess(guess!);
-                    if (guessResult > 0) {
-                      setState(() {
-                        _message = '$guess : มากเกินไป';
-                        _input = '';
-                      });
-                    } else if (guessResult < 0) {
-                      setState(() {
-                        _message = '$guess : น้อยเกินไป';
-                        _input = '';
-                      });
-                    } else {
-                      setState(() {
-                        _message =
-                        '$guess ถูกต้อง 🎉 คุณทายทั้งหมด ${widget._game
-                            .guessCount} ครั้ง';
-                      });
-                    }
-                  },
-                ),
               ),
             ],
           ),
@@ -180,50 +160,118 @@ class _LoginState extends State<Login> {
     );
   }
 
-  Widget _buildButton4(int num) {
+  Widget _buildButton(int num) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
-      child: OutlinedButton(
+      child: Material(
+        borderRadius: BorderRadius.circular(Login.buttonsize / 2),
+        child: InkWell(
+          onTap: () {
+            if (num == -2) {
+              setState(() {
+                _input = '';
+                _num = 0;
+              });
+            } else if (num == -1) {
+              print('Backspace');
+              setState(() {
+                var length = _input.length;
+                _input = _input.substring(0, length - 1);
+                _num = _num - 1;
+              });
+            } else {
+              print('$num');
+              print('$_num');
+              print('$_input');
+              setState(() {
+                _num++;
+                _input = '$_input$num';
+                if(_num == 6){
+                  if (_input == '123456') {
+                    setState(() {
+                      _input = '';
+                      _num = 0;
+                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const SecondRoute()),
+                    );
+                  } else {
+                    setState(() {
+                      _input = '';
+                      _num = 0;
+                    });
+                    showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Incorrect PIN'),
+                            content: Text('Please try again'),
+                            actions: [
+                              OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text('OK'))
+                            ],
+                          );
+                        });
+                  }
+                }
+              });
 
-        onPressed: () {
-          if (num == -2) {
-            setState(() {
-              _input = '';
-            });
-          } else if (num == -1) {
-            print('Backspace');
-            setState(() {
-              var length = _input.length;
-              _input = _input.substring(0, length - 1);
-            });
-          } else {
-            print('$num');
-            setState(() {
-              _input = '$_input$num';
-            });
-          }
-        },
+            }
+          },
+          borderRadius: BorderRadius.circular(Login.buttonsize / 2),
+          child: Container(
+            decoration: (num == -1 || num == -2)
+                ? null
+
+                : BoxDecoration(
+                    border: Border.all(color: Colors.red, width: 2.0),
+                    shape: BoxShape.circle,
+
+            ),
+            alignment: Alignment.center,
+            width: Login.buttonsize,
+            height: Login.buttonsize,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (num == -1)
+                  Icon(
+                    Icons.backspace, //ไอคอนลบ
+                    size: 30.0,
+                    color: Colors.red,
+                  )
+                else
+                  Text('$num'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class SecondRoute extends StatelessWidget {
+  const SecondRoute({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Mhee Pooh')),
+      backgroundColor: Colors.amberAccent.withOpacity(0.5),
+      body: SizedBox.expand(
         child: Container(
-          alignment: Alignment.center,
-          width: Login.buttonsize,
-          height: Login.buttonsize,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              if (num == -1)
-                Icon(
-                  Icons.backspace, // รูปไอคอน
-                  size: 30.0, // ขนาดไอคอน
-                  color: Colors.pink,
-                )
-              else if (num == -2)
-                Icon(
-                  Icons.clear, // รูปไอคอน
-                  size: 30.0, // ขนาดไอคอน
-                  color: Colors.pink,
-                )
-              else
-                Text('$num'),
+              Image.asset('assets/images/Pooh.png', width: 300),
             ],
           ),
         ),
