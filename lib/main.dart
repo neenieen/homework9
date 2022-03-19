@@ -271,7 +271,7 @@ class SecondRoute extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Image.asset('assets/images/Pooh.png', width: 300),
+              ElevatedButton(onPressed: (){} , child: const Text('LOAD DATA')),
             ],
           ),
         ),
